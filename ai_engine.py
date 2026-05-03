@@ -1,0 +1,42 @@
+import random
+
+FOOD_TYPES = ['Rice', 'Vegetables', 'Meat', 'Bread', 'Pasta']
+
+def classify_image(image_ref):
+    """
+    Mock Image Classifier:
+    In a real scenario, this would send the image to a CNN or pre-trained vision model.
+    """
+    if not image_ref:
+        return "Unknown"
+    # Simulate identifying dominant food type
+    return random.choice(FOOD_TYPES)
+
+def generate_recommendations(waste_records):
+    """
+    Mock Gen-AI Analysis:
+    In a real scenario, this would send aggregated data to an LLM to get insights.
+    """
+    if not waste_records:
+        return "Not enough data to generate recommendations."
+    
+    # Calculate some basic stats to feed the "AI"
+    total_waste = sum(r['weight_grams'] for r in waste_records)
+    if total_waste < 1000:
+        return "Waste levels are currently low. Keep up the good work!"
+    
+    # Simulate finding the most wasted item
+    food_counts = {}
+    for r in waste_records:
+        food = r.get('classified_food', 'Unknown')
+        food_counts[food] = food_counts.get(food, 0) + r['weight_grams']
+    
+    most_wasted = max(food_counts, key=food_counts.get) if food_counts else "Unknown"
+    
+    prompts = [
+        f"Significant amounts of {most_wasted} are being discarded. Consider reducing {most_wasted} portion sizes by 15%.",
+        f"Noticeable waste trend detected: {most_wasted} is frequently left over. Recommend adjusting the menu or surveying students about this dish.",
+        f"High overall waste detected ({total_waste/1000:.1f}kg). Consider implementing a 'taste before you take' policy for the main dishes."
+    ]
+    
+    return random.choice(prompts)
