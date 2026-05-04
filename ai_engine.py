@@ -13,17 +13,27 @@ def classify_image(image_ref):
     return random.choice(FOOD_TYPES)
 
 def generate_recommendations(waste_records):
-    """
-    Mock Gen-AI Analysis:
-    In a real scenario, this would send aggregated data to an LLM to get insights.
-    """
     if not waste_records:
         return "Not enough data to generate recommendations."
     
-    # Calculate some basic stats to feed the "AI"
     total_waste = sum(r['weight_grams'] for r in waste_records)
     if total_waste < 1000:
         return "Waste levels are currently low. Keep up the good work!"
+    
+    food_counts = {}
+    for r in waste_records:
+        food = r.get('classified_food', 'Unknown')
+        food_counts[food] = food_counts.get(food, 0) + r['weight_grams']
+    
+    most_wasted = max(food_counts, key=food_counts.get) if food_counts else "Unknown"
+    
+    prompts = [
+        f"Significant amounts of {most_wasted} are being discarded. Consider reducing portion sizes.",
+        f"{most_wasted} is frequently wasted. Consider adjusting the menu.",
+        f"High waste detected ({total_waste/1000:.1f}kg). Consider portion control."
+    ]
+    
+    return random.choice(prompts)
     
     # Simulate finding the most wasted item
     food_counts = {}
