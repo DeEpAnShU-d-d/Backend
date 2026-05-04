@@ -2,7 +2,7 @@ import requests
 import time
 import random
 
-API_URL = "http://localhost:5000/api/sensor-data"
+API_URL = "https://backend-wk20.onrender.com/api/sensor-data"
 
 def simulate_esp32():
     print("Starting Mock ESP32 Sensor Data Stream...")
