@@ -44,7 +44,8 @@ def receive_sensor_data():
     record = {
         "weight_grams": weight,
         "image_ref": image_ref,
-        "classified_food": classified_food
+        "classified_food": classified_food,
+        "student_id": student_id   # ✅ IMPORTANT
     }
     
     # 2. Store to "Firebase" (Mocked)
@@ -245,9 +246,26 @@ def train_face_model():
 @app.route('/api/student/<student_id>/dashboard', methods=['GET'])
 def student_dashboard(student_id):
     student = get_student_by_id(student_id)
+
     if not student:
         return jsonify({"error": "Student not found"}), 404
-    return jsonify(student), 200
+
+    # Get all waste records
+    all_records = get_all_waste()
+
+    # Filter for this student
+    student_records = [r for r in all_records if r.get("student_id") == student_id]
+
+    # Calculate total waste
+    total_waste = sum(r["weight_grams"] for r in student_records)
+
+    return jsonify({
+        "id": student["id"],
+        "name": student["name"],
+        "points": student["points"],
+        "streak": student["streak"],
+        "total_waste": total_waste
+    }), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
