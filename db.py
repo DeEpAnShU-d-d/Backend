@@ -38,7 +38,8 @@ def init_db():
             weight_grams REAL NOT NULL,
             image_ref TEXT,
             classified_food TEXT,
-            timestamp TEXT NOT NULL
+            timestamp TEXT NOT NULL,
+            student_id TEXT
         )
     ''')
     
@@ -75,10 +76,18 @@ def add_waste_record(record):
     conn = get_db_connection()
     cursor = conn.cursor()
     timestamp = datetime.now().isoformat()
+    
     cursor.execute(
-        "INSERT INTO waste_records (weight_grams, image_ref, classified_food, timestamp) VALUES (?, ?, ?, ?)",
-        (record['weight_grams'], record.get('image_ref'), record.get('classified_food'), timestamp)
+        "INSERT INTO waste_records (weight_grams, image_ref, classified_food, timestamp, student_id) VALUES (?, ?, ?, ?, ?)",
+        (
+            record['weight_grams'],
+            record.get('image_ref'),
+            record.get('classified_food'),
+            timestamp,
+            record.get('student_id')
+        )
     )
+    
     conn.commit()
     conn.close()
 
